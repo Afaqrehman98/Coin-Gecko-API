@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_main_graph"
+    app:startDestination="@id/splashFragment">
+
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.example.coingeckotask.ui.splash.SplashFragment"
+        android:label="SplashFragment" >
+
+<!--        <action-->
+<!--            android:id="@+id/action_splashFragment_to_bitCoinRatesFragment"-->
+<!--            app:destination="@id/bitCoinRatesFragment"-->
+<!--            app:popUpTo="@id/splashFragment"-->
+<!--            app:popUpToInclusive="true"/>-->
+    </fragment>
+<!--    <fragment-->
+<!--        android:id="@+id/bitCoinRatesFragment"-->
+<!--        android:name="com.example.coingeckotask.ui.bitcoin.BitCoinRatesFragment"-->
+<!--        android:label="fragment_bit_coin_rates"-->
+<!--        tools:layout="@layout/fragment_bit_coin_rates" />-->
+</navigation>
