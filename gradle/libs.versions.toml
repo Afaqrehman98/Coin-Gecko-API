@@ -20,9 +20,6 @@ cardViewVersion = "1.0.0"
 gsonVersion = "2.10.1"
 fragmentKtxVersion = "1.8.1"
 viewBinding = "8.5.1"
-pagingVersion = "3.3.0"
-coilVersion = "2.2.2"
-shimmer = "0.5.0"
 lifeCycle = "2.8.3"
 navVersion = "2.7.7"
 intuit = "1.1.0"
@@ -38,10 +35,8 @@ glideCompilerVersion = "4.11.0"
 roomVersion = "2.6.1"
 mockito = "2.8.47"
 mockitoCore = "2.8.47"
-testRunner = "1.0.1"
 dataBindingCompiler = "3.5.3"
 safeArgs = "2.5.3"  # Added Safe Args version
-hiltPlugin = "2.44"  # Added Hilt plugin version
 
 
 [libraries]
@@ -66,9 +61,6 @@ card-view = { group = "androidx.cardview", name = "cardview", version.ref = "car
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gsonVersion" }
 fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragmentKtxVersion" }
 view-binding = { group = "androidx.databinding", name = "viewbinding", version.ref = "viewBinding" }
-paging = { group = "androidx.paging", name = "paging-runtime", version.ref = "pagingVersion" }
-coil = { group = "io.coil-kt", name = "coil", version.ref = "coilVersion" }
-shimmer = { group = "com.facebook.shimmer", name = "shimmer", version.ref = "shimmer" }
 lifecycle = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifeCycle" }
 nav-fragment = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navVersion" }
 nav-ui = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navVersion" }
@@ -86,13 +78,11 @@ glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", versi
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomVersion" }
 mockito = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
 mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockitoCore" }
-test-runner = { group = "androidx.test", name = "runner", version.ref = "testRunner" }
 data-binding-compiler = { group = "androidx.databinding", name = "databinding-compiler", version.ref = "dataBindingCompiler" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-android-library = { id = "com.android.library", version.ref = "agp" }
 androidx-navigation-safe-args = { id = "androidx.navigation.safeargs", version.ref = "safeArgs" }  # Added Safe Args plugin
-dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hiltPlugin" }  # Added Hilt plugin
-
+dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }  # Added Hilt plugin
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }

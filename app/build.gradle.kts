@@ -1,8 +1,11 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.androidx.navigation.safe.args)
     alias(libs.plugins.dagger.hilt.android)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 android {
@@ -20,6 +23,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val properties = Properties()
+        properties.load(project.rootProject.file("local.properties").inputStream())
+        buildConfigField("String", "API_KEY", "\"${properties.getProperty("API_KEY")}\"")
     }
 
     buildTypes {
@@ -59,8 +66,8 @@ dependencies {
 
     // Hilt dependencies
     implementation(libs.hilt)
-    annotationProcessor(libs.hilt.compiler)
-    implementation(libs.hilt.androidx.compiler)
+    kapt(libs.hilt.compiler)
+    kapt(libs.hilt.androidx.compiler)
     implementation(libs.hilt.navigation.graph)
 
     // Add any other dependencies you need
@@ -72,8 +79,6 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.fragment.ktx)
     implementation(libs.view.binding)
-    implementation(libs.coil)
-    implementation(libs.shimmer)
     implementation(libs.lifecycle)
     implementation(libs.nav.fragment)
     implementation(libs.nav.ui)

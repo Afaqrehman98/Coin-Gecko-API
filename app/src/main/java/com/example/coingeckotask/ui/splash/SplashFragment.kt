@@ -34,7 +34,7 @@ class SplashFragment : BaseFragment<SplashViewModel, FragmentSplashBinding>() {
         mViewModel.splashStateLiveData.observe(viewLifecycleOwner) {
             when (it) {
                 is SplashState.SplashScreen -> {
-//                    navigate(SplashFragmentDirections.actionSplashFragmentToBitCoinRatesFragment())
+                    navigate(SplashFragmentDirections.actionSplashFragmentToBitCoinRatesFragment())
                 }
             }
         }
