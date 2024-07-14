@@ -1,10 +1,11 @@
 package com.example.coingeckotask.ui.bitcoin
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import androidx.fragment.app.viewModels
+import com.example.coingeckotask.R
 import com.example.coingeckotask.databinding.FragmentBitCoinRatesBinding
 import com.example.coingeckotask.ui.base.BaseFragment
 import com.example.coingeckotask.ui.viewmodels.CoinViewModel
@@ -41,11 +42,7 @@ class BitCoinRatesFragment : BaseFragment<CoinViewModel, FragmentBitCoinRatesBin
 
                 is State.Success -> {
                     if (state.data.isNotEmpty()) {
-                        requireContext().showToast(state.data[0])
-                        Log.e(
-                            BitCoinRatesFragment::class.java.simpleName,
-                            "${state.data[10]}"
-                        )
+                        setupSpinner(state.data)
                     } else {
                         requireContext().showToast("Something went wrong")
                     }
@@ -56,6 +53,16 @@ class BitCoinRatesFragment : BaseFragment<CoinViewModel, FragmentBitCoinRatesBin
                 }
             }
         })
+    }
+
+    private fun setupSpinner(currencies: List<String>) {
+        val adapter = ArrayAdapter(
+            requireContext(),
+            R.layout.spinner_item,
+            currencies
+        )
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
+        mViewBinding.spinnerCurrencies.adapter = adapter
     }
 
 }
