@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.coingeckotask.data.models.response.HistoricCoinDataResponse
 import com.example.coingeckotask.data.models.response.SupportedCurrency
 import com.example.coingeckotask.data.repositories.CoinRepository
 import com.example.coingeckotask.utils.Event
@@ -24,7 +25,15 @@ class CoinViewModel @Inject constructor(private val repository: CoinRepository) 
     val supportedCurrencyLiveData: LiveData<Event<State<SupportedCurrency>>>
         get() = _supportedCurrencyLiveData
 
+
+    private val _historicCoinLiveData =
+        MutableLiveData<Event<State<HistoricCoinDataResponse>>>()
+    val historicCoinLiveData: LiveData<Event<State<HistoricCoinDataResponse>>>
+        get() = _historicCoinLiveData
+
     private lateinit var supportedCurrencyResponse: SupportedCurrency
+    private lateinit var historicCoinDataResponse: HistoricCoinDataResponse
+
 
     fun getSupportedCurrencyList() {
         _supportedCurrencyLiveData.postValue(Event(State.loading()))
@@ -55,5 +64,37 @@ class CoinViewModel @Inject constructor(private val repository: CoinRepository) 
                 }
             }
         }
+    }
+
+    fun getCoinHistoricData(coinID: String?, vsCurrency: String?, fromDate: Long?, toDate: Long?) {
+        _historicCoinLiveData.postValue(Event(State.loading()))
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = tryCatch {
+                historicCoinDataResponse =
+                    repository.callCoinHistoricData(coinID, vsCurrency, fromDate, toDate)
+            }
+            if (result.isSuccess) {
+                withContext(Dispatchers.Main) {
+                    _historicCoinLiveData.postValue(
+                        Event(
+                            State.success(
+                                historicCoinDataResponse
+                            )
+                        )
+                    )
+                }
+            } else {
+                withContext(Dispatchers.Main) {
+                    _historicCoinLiveData.postValue(
+                        Event(
+                            State.error(
+                                result.exceptionOrNull()?.message ?: ""
+                            )
+                        )
+                    )
+                }
+            }
+        }
+
     }
 }

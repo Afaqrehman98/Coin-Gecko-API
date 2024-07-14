@@ -3,8 +3,11 @@ package com.example.coingeckotask.di
 import android.content.Context
 import com.example.coingeckotask.data.interceptors.AuthInterceptor
 import com.example.coingeckotask.data.interceptors.NetworkConnectionInterceptor
+import com.example.coingeckotask.data.models.response.PriceEntry
+import com.example.coingeckotask.data.models.response.PriceEntryDeserializer
 import com.example.coingeckotask.data.network.ApiInterface
-import com.example.coingeckotask.utils.Constants.END_POINT
+import com.example.coingeckotask.utils.Constants.BASE_URL
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
@@ -22,14 +25,23 @@ import javax.inject.Singleton
 @Module
 object AppModule {
 
+
     @Singleton
     @Provides
-    fun provideAuthRetrofitService(
+    fun provideGson(): Gson {
+        return GsonBuilder()
+            .registerTypeAdapter(PriceEntry::class.java, PriceEntryDeserializer())
+            .serializeNulls()
+            .create()
+    }
+
+    @Singleton
+    @Provides
+    fun provideOkHttpClient(
         networkConnectionInterceptor: NetworkConnectionInterceptor,
-        authInterceptor: AuthInterceptor,
-    ): ApiInterface {
-        val WS_SERVER_URL = END_POINT
-        val okkHttpclient = OkHttpClient.Builder()
+        authInterceptor: AuthInterceptor
+    ): OkHttpClient {
+        return OkHttpClient.Builder()
             .addInterceptor(networkConnectionInterceptor)
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             .addInterceptor(authInterceptor)
@@ -37,17 +49,22 @@ object AppModule {
             .readTimeout(60, TimeUnit.SECONDS)
             .writeTimeout(60, TimeUnit.SECONDS)
             .build()
+    }
 
+    @Singleton
+    @Provides
+    fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
         return Retrofit.Builder()
-            .client(okkHttpclient)
-            .baseUrl(WS_SERVER_URL)
-            .addConverterFactory(
-                GsonConverterFactory.create(
-                    GsonBuilder().serializeNulls().create()
-                )
-            )
+            .client(okHttpClient)
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
-            .create(ApiInterface::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideApiService(retrofit: Retrofit): ApiInterface {
+        return retrofit.create(ApiInterface::class.java)
     }
 
     @Singleton

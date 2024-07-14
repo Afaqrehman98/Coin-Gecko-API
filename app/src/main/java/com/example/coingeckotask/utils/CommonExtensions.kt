@@ -26,6 +26,10 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.time.LocalDate
+import java.time.ZoneId
+import java.util.Calendar
+import java.util.TimeZone
 
 // used for simple start activity without Intent parameters
 fun Activity.goToActivity(newActivity: Class<*>) {
@@ -155,4 +159,30 @@ fun Context.copyTextToClipboard(textToCopy: String) {
     val clipData = ClipData.newPlainText("text", textToCopy)
     clipboardManager.setPrimaryClip(clipData)
     Toast.makeText(this, "Text copied", Toast.LENGTH_LONG).show()
+}
+
+// Extension function to get the current date's UNIX timestamp
+fun Calendar.toUnixTimestamp(): Long {
+    return this.timeInMillis / 1000L
+}
+
+// Function to get today's date in UNIX timestamp format
+fun Context.todayUnixTimestamp(): Long {
+    val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+    calendar.set(Calendar.HOUR_OF_DAY, 0)
+    calendar.set(Calendar.MINUTE, 0)
+    calendar.set(Calendar.SECOND, 0)
+    calendar.set(Calendar.MILLISECOND, 0)
+    return calendar.toUnixTimestamp()
+}
+
+// Function to get the date two weeks ago in UNIX timestamp format
+fun Context.twoWeeksAgoUnixTimestamp(): Long {
+    val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+    calendar.add(Calendar.DAY_OF_YEAR, -14)
+    calendar.set(Calendar.HOUR_OF_DAY, 0)
+    calendar.set(Calendar.MINUTE, 0)
+    calendar.set(Calendar.SECOND, 0)
+    calendar.set(Calendar.MILLISECOND, 0)
+    return calendar.toUnixTimestamp()
 }
