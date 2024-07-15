@@ -11,8 +11,12 @@ import com.example.coingeckotask.data.models.response.PriceEntry
 import com.example.coingeckotask.databinding.FragmentBitCoinRatesBinding
 import com.example.coingeckotask.ui.base.BaseFragment
 import com.example.coingeckotask.ui.viewmodels.CoinViewModel
+import com.example.coingeckotask.utils.Constants.DEFAULT_COIN_ID
+import com.example.coingeckotask.utils.Constants.DEFAULT_VS_CURRENCY
 import com.example.coingeckotask.utils.EventObserver
 import com.example.coingeckotask.utils.State
+import com.example.coingeckotask.utils.getEndingDateTimestampInSeconds
+import com.example.coingeckotask.utils.getStartingDateTimestampInSeconds
 import com.example.coingeckotask.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -31,10 +35,10 @@ class BitCoinRatesFragment : BaseFragment<CoinViewModel, FragmentBitCoinRatesBin
         super.onCreate(savedInstanceState)
         mViewModel.getSupportedCurrencyList()
         mViewModel.getCoinHistoricData(
-            "bitcoin",
-            "eur",
-            1711929600,
-            1712275200
+            DEFAULT_COIN_ID,
+            DEFAULT_VS_CURRENCY,
+            getStartingDateTimestampInSeconds(),
+            getEndingDateTimestampInSeconds()
         )
     }
 
@@ -47,14 +51,12 @@ class BitCoinRatesFragment : BaseFragment<CoinViewModel, FragmentBitCoinRatesBin
         mViewModel.historicCoinLiveData.observe(viewLifecycleOwner, EventObserver { state ->
             when (state) {
                 is State.Loading -> {
-                    mViewBinding.apply {
-                        requireContext().showToast("Loading")
-                    }
+                    requireContext().showToast("Loading")
                 }
 
                 is State.Success -> {
-                    if (state.data.prices.isNotEmpty()) {
-                        setHistoricAdapter(state.data.prices)
+                    if (state.data.isNotEmpty()) {
+                        setHistoricAdapter(state.data)
                     } else {
                         requireContext().showToast("Something went wrong")
                     }

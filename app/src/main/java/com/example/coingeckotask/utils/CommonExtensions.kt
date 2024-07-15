@@ -26,9 +26,10 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import java.time.LocalDate
-import java.time.ZoneId
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import java.util.TimeZone
 
 // used for simple start activity without Intent parameters
@@ -161,28 +162,27 @@ fun Context.copyTextToClipboard(textToCopy: String) {
     Toast.makeText(this, "Text copied", Toast.LENGTH_LONG).show()
 }
 
-// Extension function to get the current date's UNIX timestamp
-fun Calendar.toUnixTimestamp(): Long {
-    return this.timeInMillis / 1000L
-}
-
-// Function to get today's date in UNIX timestamp format
-fun Context.todayUnixTimestamp(): Long {
-    val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-    calendar.set(Calendar.HOUR_OF_DAY, 0)
-    calendar.set(Calendar.MINUTE, 0)
-    calendar.set(Calendar.SECOND, 0)
-    calendar.set(Calendar.MILLISECOND, 0)
-    return calendar.toUnixTimestamp()
-}
-
-// Function to get the date two weeks ago in UNIX timestamp format
-fun Context.twoWeeksAgoUnixTimestamp(): Long {
-    val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+fun getStartingDateTimestampInSeconds(): Long {
+    val calendar = Calendar.getInstance()
     calendar.add(Calendar.DAY_OF_YEAR, -14)
     calendar.set(Calendar.HOUR_OF_DAY, 0)
     calendar.set(Calendar.MINUTE, 0)
     calendar.set(Calendar.SECOND, 0)
     calendar.set(Calendar.MILLISECOND, 0)
-    return calendar.toUnixTimestamp()
+    return calendar.timeInMillis / 1000
+}
+
+fun getEndingDateTimestampInSeconds(): Long {
+    val calendar = Calendar.getInstance()
+    calendar.set(Calendar.HOUR_OF_DAY, 0)
+    calendar.set(Calendar.MINUTE, 0)
+    calendar.set(Calendar.SECOND, 0)
+    calendar.set(Calendar.MILLISECOND, 0)
+    return calendar.timeInMillis / 1000
+}
+fun Long.toFormattedDateString(): String {
+    val date = Date(this)
+    val formatter = SimpleDateFormat("dd MMMM yyyy '@' h:mm a", Locale.getDefault())
+    formatter.timeZone = TimeZone.getDefault()
+    return formatter.format(date)
 }

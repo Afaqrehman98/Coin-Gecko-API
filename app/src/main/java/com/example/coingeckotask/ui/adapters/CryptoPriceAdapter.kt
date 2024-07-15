@@ -1,3 +1,4 @@
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -5,6 +6,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.coingeckotask.data.models.response.PriceEntry
 import com.example.coingeckotask.databinding.ListItemBitCoinBinding
+import com.example.coingeckotask.utils.toFormattedDateString
 
 class CryptoPriceAdapter : ListAdapter<PriceEntry, CryptoPriceAdapter.MyViewHolder>(
     CryptoPriceDiffCallback
@@ -23,11 +25,12 @@ class CryptoPriceAdapter : ListAdapter<PriceEntry, CryptoPriceAdapter.MyViewHold
         holder.bind(cryptoPrice)
     }
 
-    inner class MyViewHolder(val binding: ListItemBitCoinBinding) :
+    inner class MyViewHolder(private val binding: ListItemBitCoinBinding) :
         RecyclerView.ViewHolder(binding.root) {
+        @SuppressLint("SetTextI18n")
         fun bind(item: PriceEntry) {
-            binding.tvTime.text = item.timestamp.toString()
-            binding.tvPrice.text = item.price.toString()
+            binding.tvTime.text = "Time: ${item.timestamp.toFormattedDateString()}"
+            binding.tvPrice.text = "Price: ${item.price}"
         }
     }
 
