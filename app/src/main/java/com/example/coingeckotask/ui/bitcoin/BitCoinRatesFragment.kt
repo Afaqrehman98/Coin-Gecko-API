@@ -3,10 +3,11 @@ package com.example.coingeckotask.ui.bitcoin
 import CryptoPriceAdapter
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.viewModels
-import com.example.coingeckotask.R
 import com.example.coingeckotask.data.models.response.PriceEntry
 import com.example.coingeckotask.databinding.FragmentBitCoinRatesBinding
 import com.example.coingeckotask.ui.base.BaseFragment
@@ -43,8 +44,27 @@ class BitCoinRatesFragment : BaseFragment<CoinViewModel, FragmentBitCoinRatesBin
     }
 
     override fun observeAPICall() {
-        observeSupportedCurrency()
+        observeSupportedCurrencies()
         observeHistoricData()
+    }
+
+    private fun observeSupportedCurrencies() {
+        mViewModel.supportedCurrencyLiveData.observe(viewLifecycleOwner, EventObserver { state ->
+            when (state) {
+                is State.Loading -> {
+                    requireContext().showToast("Loading")
+                }
+
+                is State.Success -> {
+                    setupSpinner(state.data)
+                }
+
+                is State.Error -> {
+                    requireContext().showToast(state.message)
+                }
+            }
+
+        })
     }
 
     private fun observeHistoricData() {
@@ -69,29 +89,6 @@ class BitCoinRatesFragment : BaseFragment<CoinViewModel, FragmentBitCoinRatesBin
         })
     }
 
-    private fun observeSupportedCurrency() {
-        mViewModel.supportedCurrencyLiveData.observe(viewLifecycleOwner, EventObserver { state ->
-            when (state) {
-                is State.Loading -> {
-                    mViewBinding.apply {
-                        requireContext().showToast("Loading")
-                    }
-                }
-
-                is State.Success -> {
-                    if (state.data.isNotEmpty()) {
-                        setupSpinner(state.data)
-                    } else {
-                        requireContext().showToast("Something went wrong")
-                    }
-                }
-
-                is State.Error -> {
-                    requireContext().showToast(state.message)
-                }
-            }
-        })
-    }
 
     private fun setHistoricAdapter(historicData: List<PriceEntry>) {
         val cryptoPriceAdapter = CryptoPriceAdapter()
@@ -103,11 +100,33 @@ class BitCoinRatesFragment : BaseFragment<CoinViewModel, FragmentBitCoinRatesBin
     private fun setupSpinner(currencies: List<String>) {
         val adapter = ArrayAdapter(
             requireContext(),
-            R.layout.spinner_item,
+            android.R.layout.simple_spinner_item,
             currencies
+
         )
-        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         mViewBinding.spinnerCurrencies.adapter = adapter
+
+        mViewBinding.spinnerCurrencies.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    val selectedItem = parent?.getItemAtPosition(position).toString()
+                    mViewModel.getCoinHistoricData(
+                        DEFAULT_COIN_ID, selectedItem, getStartingDateTimestampInSeconds(),
+                        getEndingDateTimestampInSeconds()
+                    )
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+
+                }
+            }
     }
+
 
 }

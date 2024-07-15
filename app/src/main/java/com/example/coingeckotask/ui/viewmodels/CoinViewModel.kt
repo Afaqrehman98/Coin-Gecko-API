@@ -39,7 +39,6 @@ class CoinViewModel @Inject constructor(private val repository: CoinRepository) 
 
 
 
-
     fun getSupportedCurrencyList() {
         _supportedCurrencyLiveData.postValue(Event(State.loading()))
         viewModelScope.launch(Dispatchers.IO) {
