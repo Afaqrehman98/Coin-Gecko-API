@@ -1,5 +1,9 @@
 CoinGecko is the ultimate mobile app with seamless BitCoin Current Rate assistance at your fingertips!
 
+**_You can Install and test latest app from below 👇_**
+
+[![CoinGecko App](https://img.shields.io/badge/CoinGecko-APK-red.svg?style=for-the-badge&logo=android)](https://github.com/Afaqrehman98/Coin-Gecko-API/tree/main/apk)
+
 ## Prerequisites 📝
 
 - Android Studio(IDE) to run this project
