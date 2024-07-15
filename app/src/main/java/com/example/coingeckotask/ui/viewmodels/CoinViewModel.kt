@@ -22,8 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CoinViewModel @Inject constructor(
-    private val repository: CoinRepository,
-    private val priceEntryDao: PriceEntryDao
+    private val repository: CoinRepository
 ) :
     ViewModel() {
 
@@ -73,6 +72,12 @@ class CoinViewModel @Inject constructor(
         }
     }
 
+    fun getCoinHistoricDataFromCache() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = repository.getCachedHistoricData()
+            _historicCoinLiveData.postValue(Event(State.success(result.prices)))
+        }
+    }
 
     fun getCoinHistoricData(coinID: String?, vsCurrency: String?, fromDate: Long?, toDate: Long?) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -100,9 +105,10 @@ class CoinViewModel @Inject constructor(
         }
     }
 
-    private fun cacheHistoricData(historyData: List<PriceEntry>) {
+    private fun cacheHistoricData(dailyData: List<PriceEntry>) {
         viewModelScope.launch {
-            priceEntryDao.insertPriceHistory(historyData)
+            repository.clearCache()
+            repository.saveCacheData(dailyData)
         }
     }
 
@@ -118,6 +124,7 @@ class CoinViewModel @Inject constructor(
                 currentDate = entryDate
             }
         }
+
         cacheHistoricData(dailyData)
         return dailyData
     }

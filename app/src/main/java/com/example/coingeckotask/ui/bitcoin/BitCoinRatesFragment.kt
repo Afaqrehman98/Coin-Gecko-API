@@ -38,6 +38,7 @@ class BitCoinRatesFragment : BaseFragment<CoinViewModel, FragmentBitCoinRatesBin
     }
 
     override fun observeAPICall() {
+        mViewModel.getCoinHistoricDataFromCache()
         observeSupportedCurrencies()
         observeHistoricData()
     }
@@ -46,7 +47,7 @@ class BitCoinRatesFragment : BaseFragment<CoinViewModel, FragmentBitCoinRatesBin
         mViewModel.supportedCurrencyLiveData.observe(viewLifecycleOwner, EventObserver { state ->
             when (state) {
                 is State.Loading -> {
-                   Timber.e("Loading")
+                    Timber.e("Loading")
                 }
 
                 is State.Success -> {
