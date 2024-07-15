@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.coingeckotask.data.database.dao.PriceEntryDao
 import com.example.coingeckotask.data.models.response.HistoricCoinDataResponse
 import com.example.coingeckotask.data.models.response.PriceEntry
 import com.example.coingeckotask.data.models.response.SupportedCurrency
@@ -20,7 +21,10 @@ import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
-class CoinViewModel @Inject constructor(private val repository: CoinRepository) :
+class CoinViewModel @Inject constructor(
+    private val repository: CoinRepository,
+    private val priceEntryDao: PriceEntryDao
+) :
     ViewModel() {
 
     private val _supportedCurrencyLiveData =
@@ -36,7 +40,6 @@ class CoinViewModel @Inject constructor(private val repository: CoinRepository) 
         get() = _historicCoinLiveData
 
     private lateinit var historicCoinDataResponse: HistoricCoinDataResponse
-
 
 
     fun getSupportedCurrencyList() {
@@ -71,12 +74,12 @@ class CoinViewModel @Inject constructor(private val repository: CoinRepository) 
     }
 
 
-
     fun getCoinHistoricData(coinID: String?, vsCurrency: String?, fromDate: Long?, toDate: Long?) {
         viewModelScope.launch(Dispatchers.IO) {
             _historicCoinLiveData.postValue(Event(State.loading()))
             val result = tryCatch {
-                historicCoinDataResponse = repository.callCoinHistoricData(coinID, vsCurrency, fromDate, toDate)
+                historicCoinDataResponse =
+                    repository.callCoinHistoricData(coinID, vsCurrency, fromDate, toDate)
             }
             if (result.isSuccess) {
                 val dailyData = filterToDailyValues(historicCoinDataResponse.prices)
@@ -97,6 +100,12 @@ class CoinViewModel @Inject constructor(private val repository: CoinRepository) 
         }
     }
 
+    private fun cacheHistoricData(historyData: List<PriceEntry>) {
+        viewModelScope.launch {
+            priceEntryDao.insertPriceHistory(historyData)
+        }
+    }
+
     private fun filterToDailyValues(prices: List<PriceEntry>): List<PriceEntry> {
         val dailyData = mutableListOf<PriceEntry>()
         var currentDate: Date? = null
@@ -109,7 +118,7 @@ class CoinViewModel @Inject constructor(private val repository: CoinRepository) 
                 currentDate = entryDate
             }
         }
-
+        cacheHistoricData(dailyData)
         return dailyData
     }
 

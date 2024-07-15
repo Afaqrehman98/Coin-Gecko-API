@@ -91,6 +91,8 @@ dependencies {
     implementation(libs.coroutines.android)
     implementation(libs.coroutines.play.service)
     implementation(libs.room.runtime)
+    kapt(libs.room.compiler)
+    implementation(libs.room.ktx)
     testImplementation(libs.mockito)
     testImplementation(libs.mockito.core)
     annotationProcessor(libs.data.binding.compiler)

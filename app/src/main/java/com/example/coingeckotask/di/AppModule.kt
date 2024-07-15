@@ -1,6 +1,9 @@
 package com.example.coingeckotask.di
 
 import android.content.Context
+import androidx.room.Room
+import com.example.coingeckotask.data.database.AppDatabase
+import com.example.coingeckotask.data.database.dao.PriceEntryDao
 import com.example.coingeckotask.data.interceptors.AuthInterceptor
 import com.example.coingeckotask.data.interceptors.NetworkConnectionInterceptor
 import com.example.coingeckotask.data.models.response.PriceEntry
@@ -78,5 +81,29 @@ object AppModule {
     fun provideAuthInterceptor(@ApplicationContext context: Context): AuthInterceptor {
         return AuthInterceptor(context)
     }
+
+    @InstallIn(SingletonComponent::class)
+    @Module
+    class DatabaseModule {
+
+        @Provides
+        fun provideVideoChannelDao(appDatabase: AppDatabase): PriceEntryDao {
+            return appDatabase.priceEntryDao()
+        }
+
+
+        @Provides
+        @Singleton
+        fun provideAppDatabase(@ApplicationContext appContext: Context): AppDatabase {
+            return Room.databaseBuilder(
+                appContext,
+                AppDatabase::class.java,
+                "AppDatabase"
+            )
+                .fallbackToDestructiveMigration()
+                .build()
+        }
+    }
+
 
 }
