@@ -2,6 +2,8 @@ package com.example.coingeckotask.ui.fragments.bitcoin
 
 import CryptoPriceAdapter
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +15,7 @@ import com.example.coingeckotask.databinding.FragmentBitCoinRatesBinding
 import com.example.coingeckotask.ui.base.BaseFragment
 import com.example.coingeckotask.ui.viewmodels.CoinViewModel
 import com.example.coingeckotask.utils.Constants.DEFAULT_COIN_ID
+import com.example.coingeckotask.utils.Constants.UPDATE_INTERVAL
 import com.example.coingeckotask.utils.EventObserver
 import com.example.coingeckotask.utils.State
 import com.example.coingeckotask.utils.convertUnixToDateTime
@@ -25,6 +28,8 @@ import timber.log.Timber
 @AndroidEntryPoint
 class BitCoinRatesFragment : BaseFragment<CoinViewModel, FragmentBitCoinRatesBinding>() {
     override val mViewModel: CoinViewModel by viewModels()
+    private lateinit var handler: Handler
+    private lateinit var updateRunnable: Runnable
 
     override fun getViewBinding(
         inflater: LayoutInflater,
@@ -55,9 +60,9 @@ class BitCoinRatesFragment : BaseFragment<CoinViewModel, FragmentBitCoinRatesBin
                 is State.Success -> {
                     mViewBinding.apply {
                         tvCurrentPrice.text =
-                            "Current Price: ${state.data.bitcoin.currencies.entries.firstOrNull()?.key}"
+                            "Current Price: ${state.data.bitcoin.currencies.entries.firstOrNull()?.value}"
                         tvLastUpdated.text =
-                            "Updated at: ${state.data.bitcoin.currencies.entries.firstOrNull()?.value?.convertUnixToDateTime()}"
+                            "Updated at: ${state.data.bitcoin.lastUpdatedAt.convertUnixToDateTime()}"
                     }
                 }
 
@@ -136,12 +141,16 @@ class BitCoinRatesFragment : BaseFragment<CoinViewModel, FragmentBitCoinRatesBin
                     position: Int,
                     id: Long
                 ) {
-                    val selectedItem = parent?.getItemAtPosition(position).toString()
-                    mViewModel.getCoinHistoricData(
-                        DEFAULT_COIN_ID, selectedItem, getStartingDateTimestampInSeconds(),
-                        getEndingDateTimestampInSeconds()
-                    )
-                    mViewModel.getCoinPrice(DEFAULT_COIN_ID, selectedItem)
+                    if (view != null) {
+                        val selectedItem = parent?.getItemAtPosition(position).toString()
+                        mViewModel.getCoinHistoricData(
+                            DEFAULT_COIN_ID, selectedItem, getStartingDateTimestampInSeconds(),
+                            getEndingDateTimestampInSeconds()
+                        )
+                        mViewModel.getCoinPrice(DEFAULT_COIN_ID, selectedItem)
+                        continuousApiCall(selectedItem)
+                    }
+
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -150,5 +159,39 @@ class BitCoinRatesFragment : BaseFragment<CoinViewModel, FragmentBitCoinRatesBin
             }
     }
 
+    private fun continuousApiCall(selectedCurrency: String) {
+        if (!::handler.isInitialized) {
+            handler = Handler(Looper.getMainLooper())
+        }
+
+        updateRunnable = object : Runnable {
+            override fun run() {
+                mViewModel.getCoinPrice(DEFAULT_COIN_ID, selectedCurrency)
+                handler.postDelayed(this, UPDATE_INTERVAL)
+            }
+        }
+
+        handler.postDelayed(updateRunnable, UPDATE_INTERVAL)
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        if (::handler.isInitialized){
+            handler.post(updateRunnable)
+        }
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacks(updateRunnable)
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        handler.removeCallbacks(updateRunnable)
+    }
 
 }
