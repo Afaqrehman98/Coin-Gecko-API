@@ -1,4 +1,4 @@
-package com.example.coingeckotask.ui.bitcoin
+package com.example.coingeckotask.ui.fragments.bitcoin
 
 import CryptoPriceAdapter
 import android.os.Bundle
@@ -54,9 +54,10 @@ class BitCoinRatesFragment : BaseFragment<CoinViewModel, FragmentBitCoinRatesBin
 
                 is State.Success -> {
                     mViewBinding.apply {
-                        tvCurrentPrice.text = "Current Price: ${state.data.bitcoin.usd}"
+                        tvCurrentPrice.text =
+                            "Current Price: ${state.data.bitcoin.currencies.entries.firstOrNull()?.key}"
                         tvLastUpdated.text =
-                            "Updated at: ${state.data.bitcoin.lastUpdatedAt.convertUnixToDateTime()}"
+                            "Updated at: ${state.data.bitcoin.currencies.entries.firstOrNull()?.value?.convertUnixToDateTime()}"
                     }
                 }
 

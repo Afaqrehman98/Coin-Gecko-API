@@ -1,4 +1,4 @@
-package com.example.coingeckotask.ui.splash
+package com.example.coingeckotask.ui.fragments.splash
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -34,7 +34,7 @@ class SplashFragment : BaseFragment<SplashViewModel, FragmentSplashBinding>() {
         mViewModel.splashStateLiveData.observe(viewLifecycleOwner) {
             when (it) {
                 is SplashState.SplashScreen -> {
-                    navigate(SplashFragmentDirections.actionSplashFragmentToBitCoinRatesFragment())
+                    navigate(com.example.coingeckotask.ui.fragments.splash.SplashFragmentDirections.actionSplashFragmentToBitCoinRatesFragment())
                 }
             }
         }

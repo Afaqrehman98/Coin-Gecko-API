@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/splashFragment"
-        android:name="com.example.coingeckotask.ui.splash.SplashFragment"
+        android:name="com.example.coingeckotask.ui.fragments.splash.SplashFragment"
         android:label="SplashFragment" >
 
         <action
@@ -19,7 +19,7 @@
     </fragment>
     <fragment
         android:id="@+id/bitCoinRatesFragment"
-        android:name="com.example.coingeckotask.ui.bitcoin.BitCoinRatesFragment"
+        android:name="com.example.coingeckotask.ui.fragments.bitcoin.BitCoinRatesFragment"
         android:label="fragment_bit_coin_rates"
         tools:layout="@layout/fragment_bit_coin_rates" />
 </navigation>

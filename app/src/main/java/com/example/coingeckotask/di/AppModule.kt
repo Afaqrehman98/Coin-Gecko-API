@@ -6,6 +6,8 @@ import com.example.coingeckotask.data.database.AppDatabase
 import com.example.coingeckotask.data.database.dao.PriceEntryDao
 import com.example.coingeckotask.data.interceptors.AuthInterceptor
 import com.example.coingeckotask.data.interceptors.NetworkConnectionInterceptor
+import com.example.coingeckotask.data.models.response.Bitcoin
+import com.example.coingeckotask.data.models.response.BitcoinDeserializer
 import com.example.coingeckotask.data.models.response.PriceEntry
 import com.example.coingeckotask.data.models.response.PriceEntryDeserializer
 import com.example.coingeckotask.data.network.ApiInterface
@@ -34,6 +36,7 @@ object AppModule {
     fun provideGson(): Gson {
         return GsonBuilder()
             .registerTypeAdapter(PriceEntry::class.java, PriceEntryDeserializer())
+            .registerTypeAdapter(Bitcoin::class.java, BitcoinDeserializer())
             .serializeNulls()
             .create()
     }
