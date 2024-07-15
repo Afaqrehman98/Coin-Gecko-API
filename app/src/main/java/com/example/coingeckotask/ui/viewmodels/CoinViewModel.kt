@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.coingeckotask.data.database.dao.PriceEntryDao
+import com.example.coingeckotask.data.models.response.CryptoData
 import com.example.coingeckotask.data.models.response.HistoricCoinDataResponse
 import com.example.coingeckotask.data.models.response.PriceEntry
 import com.example.coingeckotask.data.models.response.SupportedCurrency
@@ -41,6 +42,14 @@ class CoinViewModel @Inject constructor(
     private lateinit var historicCoinDataResponse: HistoricCoinDataResponse
 
 
+    private val _coinPriceLiveData =
+        MutableLiveData<Event<State<CryptoData>>>()
+    val coinPriceLiveData: LiveData<Event<State<CryptoData>>>
+        get() = _coinPriceLiveData
+
+    private lateinit var cryptoDataResponse: CryptoData
+
+
     fun getSupportedCurrencyList() {
         _supportedCurrencyLiveData.postValue(Event(State.loading()))
         viewModelScope.launch(Dispatchers.IO) {
@@ -61,6 +70,37 @@ class CoinViewModel @Inject constructor(
             } else {
                 withContext(Dispatchers.Main) {
                     _supportedCurrencyLiveData.postValue(
+                        Event(
+                            State.error(
+                                result.exceptionOrNull()?.message ?: ""
+                            )
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    fun getCoinPrice(coinID: String?, vsCurrency: String?) {
+        _coinPriceLiveData.postValue(Event(State.loading()))
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = tryCatch {
+                cryptoDataResponse =
+                    repository.callCoinPriceByID(coinID, vsCurrency)
+            }
+            if (result.isSuccess) {
+                withContext(Dispatchers.Main) {
+                    _coinPriceLiveData.postValue(
+                        Event(
+                            State.success(
+                                cryptoDataResponse
+                            )
+                        )
+                    )
+                }
+            } else {
+                withContext(Dispatchers.Main) {
+                    _coinPriceLiveData.postValue(
                         Event(
                             State.error(
                                 result.exceptionOrNull()?.message ?: ""

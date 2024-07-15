@@ -1,5 +1,6 @@
 package com.example.coingeckotask.data.network
 
+import com.example.coingeckotask.data.models.response.CryptoData
 import com.example.coingeckotask.data.models.response.HistoricCoinDataResponse
 import com.example.coingeckotask.data.models.response.SupportedCurrency
 import retrofit2.Response
@@ -21,6 +22,13 @@ interface ApiInterface {
         @Query("to") to: Long?,
         @Query("precision") precision: String = "2"
     ): Response<HistoricCoinDataResponse>
+
+    @GET("simple/price")
+    suspend fun callCoinPriceByID(
+        @Query("ids") id: String?,
+        @Query("vs_currencies") vsCurrency: String?,
+        @Query("include_last_updated_at") lastUpdatedAt: Boolean = true
+    ): Response<CryptoData>
 
 
 }

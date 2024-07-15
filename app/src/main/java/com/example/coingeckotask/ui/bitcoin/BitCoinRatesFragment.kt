@@ -15,6 +15,7 @@ import com.example.coingeckotask.ui.viewmodels.CoinViewModel
 import com.example.coingeckotask.utils.Constants.DEFAULT_COIN_ID
 import com.example.coingeckotask.utils.EventObserver
 import com.example.coingeckotask.utils.State
+import com.example.coingeckotask.utils.convertUnixToDateTime
 import com.example.coingeckotask.utils.getEndingDateTimestampInSeconds
 import com.example.coingeckotask.utils.getStartingDateTimestampInSeconds
 import com.example.coingeckotask.utils.showToast
@@ -40,7 +41,31 @@ class BitCoinRatesFragment : BaseFragment<CoinViewModel, FragmentBitCoinRatesBin
     override fun observeAPICall() {
         mViewModel.getCoinHistoricDataFromCache()
         observeSupportedCurrencies()
+        observeCoinPrice()
         observeHistoricData()
+    }
+
+    private fun observeCoinPrice() {
+        mViewModel.coinPriceLiveData.observe(viewLifecycleOwner, EventObserver { state ->
+            when (state) {
+                is State.Loading -> {
+                    Timber.e("Loading")
+                }
+
+                is State.Success -> {
+                    mViewBinding.apply {
+                        tvCurrentPrice.text = "Current Price: ${state.data.bitcoin.usd}"
+                        tvLastUpdated.text =
+                            "Updated at: ${state.data.bitcoin.lastUpdatedAt.convertUnixToDateTime()}"
+                    }
+                }
+
+                is State.Error -> {
+                    requireContext().showToast(state.message)
+                }
+            }
+
+        })
     }
 
     private fun observeSupportedCurrencies() {
@@ -115,6 +140,7 @@ class BitCoinRatesFragment : BaseFragment<CoinViewModel, FragmentBitCoinRatesBin
                         DEFAULT_COIN_ID, selectedItem, getStartingDateTimestampInSeconds(),
                         getEndingDateTimestampInSeconds()
                     )
+                    mViewModel.getCoinPrice(DEFAULT_COIN_ID, selectedItem)
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {

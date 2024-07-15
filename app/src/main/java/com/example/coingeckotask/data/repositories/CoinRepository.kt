@@ -1,6 +1,7 @@
 package com.example.coingeckotask.data.repositories
 
 import com.example.coingeckotask.data.database.dao.PriceEntryDao
+import com.example.coingeckotask.data.models.response.CryptoData
 import com.example.coingeckotask.data.models.response.HistoricCoinDataResponse
 import com.example.coingeckotask.data.models.response.PriceEntry
 import com.example.coingeckotask.data.models.response.SupportedCurrency
@@ -17,6 +18,13 @@ class CoinRepository @Inject constructor(
     ): SupportedCurrency = apiRequest {
         api.callSupportedCurrency()
     }
+
+    suspend fun callCoinPriceByID(
+        coinID: String?, vsCurrency: String?
+    ): CryptoData = apiRequest {
+        api.callCoinPriceByID(coinID, vsCurrency)
+    }
+
 
     suspend fun getCachedHistoricData(): HistoricCoinDataResponse =
         HistoricCoinDataResponse(priceEntryDao.getPriceHistory())

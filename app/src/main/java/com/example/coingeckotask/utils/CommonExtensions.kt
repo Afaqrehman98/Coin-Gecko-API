@@ -186,3 +186,9 @@ fun Long.toFormattedDateString(): String {
     formatter.timeZone = TimeZone.getDefault()
     return formatter.format(date)
 }
+
+fun Long.convertUnixToDateTime(): String {
+    val date = Date(this * 1000) // Convert seconds to milliseconds
+    val format = SimpleDateFormat("dd MMMM yyyy '@' h:mm a", Locale.getDefault())
+    return format.format(date)
+}
