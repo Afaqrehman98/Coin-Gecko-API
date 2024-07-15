@@ -13,13 +13,13 @@ import com.example.coingeckotask.databinding.FragmentBitCoinRatesBinding
 import com.example.coingeckotask.ui.base.BaseFragment
 import com.example.coingeckotask.ui.viewmodels.CoinViewModel
 import com.example.coingeckotask.utils.Constants.DEFAULT_COIN_ID
-import com.example.coingeckotask.utils.Constants.DEFAULT_VS_CURRENCY
 import com.example.coingeckotask.utils.EventObserver
 import com.example.coingeckotask.utils.State
 import com.example.coingeckotask.utils.getEndingDateTimestampInSeconds
 import com.example.coingeckotask.utils.getStartingDateTimestampInSeconds
 import com.example.coingeckotask.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class BitCoinRatesFragment : BaseFragment<CoinViewModel, FragmentBitCoinRatesBinding>() {
@@ -35,12 +35,6 @@ class BitCoinRatesFragment : BaseFragment<CoinViewModel, FragmentBitCoinRatesBin
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mViewModel.getSupportedCurrencyList()
-        mViewModel.getCoinHistoricData(
-            DEFAULT_COIN_ID,
-            DEFAULT_VS_CURRENCY,
-            getStartingDateTimestampInSeconds(),
-            getEndingDateTimestampInSeconds()
-        )
     }
 
     override fun observeAPICall() {
@@ -52,7 +46,7 @@ class BitCoinRatesFragment : BaseFragment<CoinViewModel, FragmentBitCoinRatesBin
         mViewModel.supportedCurrencyLiveData.observe(viewLifecycleOwner, EventObserver { state ->
             when (state) {
                 is State.Loading -> {
-                    requireContext().showToast("Loading")
+                   Timber.e("Loading")
                 }
 
                 is State.Success -> {
@@ -71,7 +65,7 @@ class BitCoinRatesFragment : BaseFragment<CoinViewModel, FragmentBitCoinRatesBin
         mViewModel.historicCoinLiveData.observe(viewLifecycleOwner, EventObserver { state ->
             when (state) {
                 is State.Loading -> {
-                    requireContext().showToast("Loading")
+                    Timber.e("Loading")
                 }
 
                 is State.Success -> {
