@@ -69,6 +69,10 @@ class BitCoinRatesFragment : BaseFragment<CoinViewModel, FragmentBitCoinRatesBin
                 is State.Error -> {
                     requireContext().showToast(state.message)
                 }
+
+                else -> {
+                    Timber.e("Unexpected state: $state")
+                }
             }
 
         })
@@ -87,6 +91,10 @@ class BitCoinRatesFragment : BaseFragment<CoinViewModel, FragmentBitCoinRatesBin
 
                 is State.Error -> {
                     requireContext().showToast(state.message)
+                }
+
+                else -> {
+                    Timber.e("Unexpected state: $state")
                 }
             }
 
@@ -110,6 +118,10 @@ class BitCoinRatesFragment : BaseFragment<CoinViewModel, FragmentBitCoinRatesBin
 
                 is State.Error -> {
                     requireContext().showToast(state.message)
+                }
+
+                else -> {
+                    Timber.e("Unexpected state: $state")
                 }
             }
         })
@@ -177,7 +189,7 @@ class BitCoinRatesFragment : BaseFragment<CoinViewModel, FragmentBitCoinRatesBin
 
     override fun onResume() {
         super.onResume()
-        if (::handler.isInitialized){
+        if (::handler.isInitialized) {
             handler.post(updateRunnable)
         }
 

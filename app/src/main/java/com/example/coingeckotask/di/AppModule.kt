@@ -11,6 +11,8 @@ import com.example.coingeckotask.data.models.response.BitcoinDeserializer
 import com.example.coingeckotask.data.models.response.PriceEntry
 import com.example.coingeckotask.data.models.response.PriceEntryDeserializer
 import com.example.coingeckotask.data.network.ApiInterface
+import com.example.coingeckotask.data.repositories.CoinRepository
+import com.example.coingeckotask.data.usecase.CoinUseCase
 import com.example.coingeckotask.utils.Constants.BASE_URL
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -108,5 +110,10 @@ object AppModule {
         }
     }
 
+    @Singleton
+    @Provides
+    fun provideCoinUseCase(repository: CoinRepository): CoinUseCase {
+        return CoinUseCase(repository)
+    }
 
 }
